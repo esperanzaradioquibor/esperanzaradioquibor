@@ -143,17 +143,20 @@ function toggleLivePlayer() {
   if (!audio.paused) {
     audio.pause();
     audio.src = '';
+    audio.removeAttribute('src');
     icon.className = 'fas fa-play';
     text.textContent = 'Escuchar en vivo';
     return;
   }
 
+  audio.crossOrigin = 'anonymous';
   audio.src = STREAM_URL;
+  audio.load();
   audio.play().then(() => {
     icon.className = 'fas fa-stop';
     text.textContent = 'Detener';
-  }).catch(() => {
-    alert('No se pudo conectar con la radio. Intenta más tarde.');
+  }).catch((e) => {
+    alert('No se pudo conectar con la radio. Intenta más tarde. (' + e.message + ')');
   });
 }
 
