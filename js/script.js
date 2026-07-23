@@ -135,29 +135,48 @@ function togglePodcast(id) {
 }
 
 /* LIVE PLAYER */
+let liveAudio = null;
+
 function toggleLivePlayer() {
-  const audio = document.getElementById('liveAudio');
   const icon = document.getElementById('playIcon');
   const text = document.getElementById('playText');
 
-  if (!audio.paused) {
-    audio.pause();
-    audio.src = '';
-    audio.removeAttribute('src');
+  if (liveAudio && !liveAudio.paused) {
+    liveAudio.pause();
+    liveAudio.src = '';
+    liveAudio = null;
     icon.className = 'fas fa-play';
     text.textContent = 'Escuchar en vivo';
     return;
   }
 
-  audio.crossOrigin = 'anonymous';
-  audio.src = STREAM_URL;
-  audio.load();
-  audio.play().then(() => {
-    icon.className = 'fas fa-stop';
-    text.textContent = 'Detener';
-  }).catch((e) => {
-    alert('No se pudo conectar con la radio. Intenta más tarde. (' + e.message + ')');
-  });
+  if (liveAudio) {
+    liveAudio.src = '';
+    liveAudio = null;
+  }
+
+  liveAudio = new Audio();
+  liveAudio.crossOrigin = 'anonymous';
+  liveAudio.preload = 'none';
+
+  liveAudio.onerror = () => {
+    icon.className = 'fas fa-play';
+    text.textContent = 'Escuchar en vivo';
+    liveAudio = null;
+    alert('No se pudo conectar con la radio. Verifica tu conexión e intenta de nuevo.');
+  };
+
+  liveAudio.oncanplay = () => {
+    liveAudio.play().catch(() => {
+      liveAudio = null;
+      alert('No se pudo reproducir el audio. Intenta de nuevo.');
+    });
+  };
+
+  liveAudio.src = STREAM_URL;
+
+  icon.className = 'fas fa-spinner fa-spin';
+  text.textContent = 'Conectando...';
 }
 
 /* CONTACT */
