@@ -139,6 +139,7 @@ function toggleLivePlayer() {
   const audio = document.getElementById('liveAudio');
   const icon = document.getElementById('playIcon');
   const text = document.getElementById('playText');
+  let retries = 0;
 
   if (!audio.paused) {
     audio.pause();
@@ -148,13 +149,26 @@ function toggleLivePlayer() {
     return;
   }
 
+  function tryPlay() {
+    audio.play().then(() => {
+      icon.className = 'fas fa-stop';
+      text.textContent = 'Detener';
+    }).catch(() => {
+      retries++;
+      if (retries < 5) {
+        setTimeout(tryPlay, 2000);
+      } else {
+        icon.className = 'fas fa-play';
+        text.textContent = 'Escuchar en vivo';
+        alert('No se pudo conectar con la radio. Intenta más tarde.');
+      }
+    });
+  }
+
   audio.src = STREAM_URL;
-  audio.play().then(() => {
-    icon.className = 'fas fa-stop';
-    text.textContent = 'Detener';
-  }).catch(() => {
-    alert('No se pudo conectar con la radio. Intenta más tarde.');
-  });
+  icon.className = 'fas fa-spinner fa-spin';
+  text.textContent = 'Conectando...';
+  setTimeout(tryPlay, 1000);
 }
 
 /* CONTACT */
