@@ -148,23 +148,12 @@ function toggleLivePlayer() {
     return;
   }
 
-  const isHttps = window.location.protocol === 'https:';
-  const streamUrl = isHttps
-    ? 'https://corsproxy.io/?' + encodeURIComponent(STREAM_URL)
-    : STREAM_URL;
-
-  audio.src = streamUrl;
+  audio.src = STREAM_URL;
   audio.play().then(() => {
     icon.className = 'fas fa-stop';
     text.textContent = 'Detener';
   }).catch(() => {
-    audio.src = STREAM_URL;
-    audio.play().then(() => {
-      icon.className = 'fas fa-stop';
-      text.textContent = 'Detener';
-    }).catch(() => {
-      alert('No se pudo conectar con la radio. Intenta más tarde.');
-    });
+    alert('No se pudo conectar con la radio. Intenta más tarde.');
   });
 }
 

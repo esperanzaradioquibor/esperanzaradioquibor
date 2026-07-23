@@ -1,4 +1,4 @@
-const STREAM_URL = 'http://37.157.242.101:4499/stream';
+const STREAM_URL = 'https://esperanza-proxy.esperanzaradioquibor.workers.dev';
 
 const DAYS = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
 
